@@ -36,7 +36,6 @@ class S2Extractor:
         self.dir_str_original = self.scenes_str
         self.dir_hash =  hashlib.md5(self.dir_str_original.encode('UTF-8')).hexdigest()
         self.dir_hash_path = os.path.join(self.processed_path, self.dir_hash)
-        self.clip_path = os.path.join(self.dir_hash_path, "clipped")
 
     @staticmethod
     def shorten(orig, short):
@@ -80,7 +79,6 @@ class S2Extractor:
             return complete, ag, ml, self.scene_list
 
         os.mkdir(self.dir_hash_path)
-        os.mkdir(self.clip_path)
         scene_processor = SceneProcessor(self.scene_list, self.processed_path, self.source_csv_path)
         scene_processor.create_clips()
         cd = SceneToCSVs(self.scene_list, self.processed_path, self.source_csv_path)

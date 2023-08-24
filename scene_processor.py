@@ -17,11 +17,13 @@ class SceneProcessor:
                 print(f"Processed scene dir exists {index + 1}: {scene}. Skipping")
                 continue
             os.mkdir(dest_clipped_scene_folder_path)
+            clip_path = os.path.join(dest_clipped_scene_folder_path, "clipped")
+            os.mkdir(clip_path)
             base = self.get_scene_source(scene)
-            self.clip_bands(base, dest_clipped_scene_folder_path)
+            self.clip_bands(base, clip_path)
             print(f"Done clipping scene {index+1}: {scene}")
 
-    def clip_bands(self, base, dest_clipped_scene_folder_path):
+    def clip_bands(self, base, clip_path):
         done = []
         folders = os.listdir(base)
         folders = sorted(folders, key=lambda x: int(re.findall(r'\d+', x)[0]), reverse=True)
@@ -36,7 +38,7 @@ class SceneProcessor:
                     continue
                 done.append(band)
                 source_band_path = os.path.join(resolution_path, file_name)
-                dest_band_path = os.path.join(dest_clipped_scene_folder_path, f"{band}.jp2")
+                dest_band_path = os.path.join(clip_path, f"{band}.jp2")
                 clipper = Clipper(source_band_path, dest_band_path, self.source_csv_path)
                 clipper.clip()
         return done
