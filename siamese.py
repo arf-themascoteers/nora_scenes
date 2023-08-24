@@ -12,7 +12,7 @@ import torch.nn.functional as F
 
 class Siamese(nn.Module):
     def __init__(self, device, train_x, train_y, test_x, test_y, validation_x, validation_y,
-                 band_index_start, band_count, band_repeat):
+                 band_index_start, band_count):
         super().__init__()
         torch.manual_seed(1)
         self.verbose = False
@@ -29,11 +29,9 @@ class Siamese(nn.Module):
         model_name = str(time()).replace(".","_")
         self.BEST_MODEL_PATH = f"models/{model_name}.h5"
         self.EARLY_STOP = True
-        x_size = validation_x.shape[1]
 
         self.band_index_start = band_index_start
         self.band_count = band_count
-        self.band_repeat = band_repeat
 
         self.props = nn.Sequential(
             nn.Linear(self.band_index_start, 10),
@@ -47,12 +45,6 @@ class Siamese(nn.Module):
             nn.Linear(10, 1)
         )
 
-        self.scenes = nn.Sequential(
-            nn.Linear(self.band_repeat, 5),
-            nn.LeakyReLU(),
-            nn.Linear(5, 1)
-        )
-
         self.combo = nn.Sequential(
             nn.Linear(self.band_index_start + 1, 7),
             nn.LeakyReLU(),
@@ -60,24 +52,25 @@ class Siamese(nn.Module):
         )
 
     def forward(self, x):
+        band_repeat = (x.shape[1] - self.band_index_start) // self.band_count
         x_props = x[:,0: self.band_index_start]
-        x_bands = torch.zeros((x.shape[0], self.band_count, self.band_repeat), dtype=torch.float32)
+        x_bands = torch.zeros((x.shape[0], self.band_count, band_repeat), dtype=torch.float32)
         x_bands = x_bands.to(self.device)
 
-        for i in range(self.band_repeat):
+        for i in range(band_repeat):
             start = self.band_index_start + (i*self.band_count)
             end = start + self.band_count
             x_bands[:,:,i] = x[:, start: end]
 
         x_props = self.props(x_props)
 
-        band_output = torch.zeros((x.shape[0], self.band_repeat), dtype=torch.float32)
+        band_output = torch.zeros((x.shape[0], band_repeat), dtype=torch.float32)
         band_output = band_output.to(self.device)
 
-        for i in range(self.band_repeat):
+        for i in range(band_repeat):
             band_output[:,i:i+1] = self.bands(x_bands[:,:,i])
 
-        band_output = torch.sum(band_output, dim=1, keepdim=True)
+        band_output = torch.mean(band_output, dim=1, keepdim=True)
 
         x = torch.cat((x_props, band_output), dim=1)
         x = F.leaky_relu(x)

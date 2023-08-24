@@ -24,12 +24,9 @@ class FoldDSManager:
 
         self.band_index_start = len(x_columns)
         self.band_count = 0
-        self.band_repeat = 0
         for a_col in self.x:
             if a_col.startswith("B"):
                 matched_cols = [col for col in df.columns if a_col in col]
-                if self.band_repeat == 0:
-                    self.band_repeat = len(matched_cols)
                 x_columns = x_columns + matched_cols
                 self.band_count = self.band_count + 1
 
@@ -41,21 +38,18 @@ class FoldDSManager:
         df = df[columns]
         df = df.sample(frac=1)
         self.full_data = df.to_numpy()
+        self.train_data, self.validation_data = model_selection.train_test_split(self.full_data, test_size=0.1, random_state=2)
 
     def get_k_folds(self):
         kf = KFold(n_splits=self.folds)
         for i, (train_index, test_index) in enumerate(kf.split(self.full_data)):
-            train_data = self.full_data[train_index]
-            train_data, validation_data = model_selection.train_test_split(train_data, test_size=0.1, random_state=2)
             test_data = self.full_data[test_index]
-            train_x = train_data[:, :-1]
-            train_y = train_data[:, -1]
             test_x = test_data[:, :-1]
             test_y = test_data[:, -1]
-            validation_x = validation_data[:, :-1]
-            validation_y = validation_data[:, -1]
+            yield test_x, test_y
 
-            yield train_x, train_y, test_x, test_y, validation_x, validation_y
+    def get_train_validation(self):
+        return self.train_data[:, :-1], self.train_data[:, -1], self.validation_data[:, :-1], self.validation_data[:, -1]
 
     def get_folds(self):
         return self.folds
