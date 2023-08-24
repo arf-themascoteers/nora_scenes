@@ -16,6 +16,11 @@ class FoldDSManager:
             self.x = list(df.columns)
             self.x.remove(self.y)
         self.folds = folds
+        x_columns = []
+        for a_col in self.x:
+            if a_col.startswith("B"):
+                x_columns = x_columns + [col for col in df.columns if a_col in col]
+        self.x = x_columns
         columns = self.x + [self.y]
         df = df[columns]
         df = df.sample(frac=1)
