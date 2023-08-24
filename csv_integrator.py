@@ -31,7 +31,7 @@ class CSVIntegrator:
 
             scene_complete = os.path.join(scene_csvs_home, "complete.csv")
             complete = pd.read_csv(scene_complete)
-            complete.insert(len(complete.columns), "scene", pd.Series([index for _ in self.scene_list]))
+            complete.insert(len(complete.columns), "scene", pd.Series([index] * len(complete)))
             if all_complete is None:
                 all_complete = complete
             else:
@@ -39,7 +39,7 @@ class CSVIntegrator:
 
             scene_ag = os.path.join(scene_csvs_home, "ag.csv")
             ag = pd.read_csv(scene_ag)
-            ag.insert(len(ag.columns), "scene", pd.Series([index for _ in self.scene_list]))
+            ag.insert(len(ag.columns), "scene", pd.Series([index] * len(ag)))
             if all_ag is None:
                 all_ag = ag
             else:
@@ -63,25 +63,25 @@ class CSVIntegrator:
 
             scene_complete = os.path.join(scene_csvs_home, "complete.csv")
             complete = pd.read_csv(scene_complete)
-            complete.insert(len(complete.columns), "scene", pd.Series([index for _ in self.scene_list]))
+            complete.insert(len(complete.columns), "scene", pd.Series([index] * len(complete)))
             complete.rename(columns=update_map, inplace=True)
             if all_complete is None:
                 all_complete = complete
             else:
-                all_complete.reset_index(inplace=True)
-                complete.reset_index(inplace=True)
+                all_complete.reset_index(inplace=True, drop=True)
+                complete.reset_index(inplace=True, drop=True)
                 complete = complete[updated_band_columns]
                 all_complete = pd.concat([all_complete, complete], axis=1)
 
             scene_ag = os.path.join(scene_csvs_home, "ag.csv")
             ag = pd.read_csv(scene_ag)
-            ag.insert(len(ag.columns), "scene", pd.Series([index for _ in self.scene_list]))
+            ag.insert(len(ag.columns), "scene", pd.Series([index] * len(ag)))
             ag.rename(columns=update_map, inplace=True)
             if all_ag is None:
                 all_ag = ag
             else:
-                all_ag.reset_index(inplace=True)
-                ag.reset_index(inplace=True)
+                all_ag.reset_index(inplace=True, drop=True)
+                ag.reset_index(inplace=True, drop=True)
                 ag = ag[updated_band_columns]
                 all_ag = pd.concat([all_ag, ag], axis=1)
 
@@ -99,7 +99,7 @@ class CSVIntegrator:
 
             scene_complete = os.path.join(scene_csvs_home, "complete.csv")
             complete = pd.read_csv(scene_complete)
-            complete.insert(len(complete.columns), "scene", pd.Series([index for _ in self.scene_list]))
+            complete.insert(len(complete.columns), "scene", pd.Series([index] * len(complete)))
             if all_complete is None:
                 all_complete = complete
             else:
@@ -107,7 +107,7 @@ class CSVIntegrator:
 
             scene_ag = os.path.join(scene_csvs_home, "ag.csv")
             ag = pd.read_csv(scene_ag)
-            ag.insert(len(ag.columns), "scene", pd.Series([index for _ in self.scene_list]))
+            ag.insert(len(ag.columns), "scene", pd.Series([index] * len(ag)))
             if all_ag is None:
                 all_ag = ag
             else:
@@ -115,7 +115,7 @@ class CSVIntegrator:
 
         all_complete.to_csv(self.complete_mean, index=False)
 
-        all_ag.drop(columns=CSVProcessor.get_geo_columns(), axis=1, inplace=True)
+        all_ag.drop(inplace=True, columns=["scene"], axis=1)
         spatial_columns = CSVProcessor.get_spatial_columns(all_ag)
         columns_to_agg = all_ag.columns.drop(spatial_columns)
         all_ag = all_ag.groupby(spatial_columns)[columns_to_agg].mean().reset_index()

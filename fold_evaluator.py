@@ -27,9 +27,9 @@ class FoldEvaluator:
             s2 = S2Extractor(config_object["scenes"])
             ml_row, ml_col, ml_mean, scenes = s2.process()
             ml = ml_row
-            if config["ag"] == "col":
+            if config_object["ag"] == "col":
                 ml = ml_col
-            elif config["ag"] == "mean":
+            elif config_object["ag"] == "mean":
                 ml = ml_mean
             self.csvs.append(ml)
             self.scenes.append(scenes)
