@@ -36,27 +36,21 @@ class Siamese(nn.Module):
         self.band_repeat = band_repeat
 
         self.props = nn.Sequential(
-            nn.Linear(self.band_index_start, 10),
+            nn.Linear(self.band_index_start, 20),
             nn.LeakyReLU(),
-            nn.Linear(10, self.band_index_start)
+            nn.Linear(20, self.band_index_start)
         )
 
         self.bands = nn.Sequential(
-            nn.Linear(self.band_count, 10),
+            nn.Linear(self.band_count, 20),
             nn.LeakyReLU(),
-            nn.Linear(10, 1)
-        )
-
-        self.scenes = nn.Sequential(
-            nn.Linear(self.band_repeat, 5),
-            nn.LeakyReLU(),
-            nn.Linear(5, 1)
+            nn.Linear(20, 1)
         )
 
         self.combo = nn.Sequential(
-            nn.Linear(self.band_index_start + 1, 7),
+            nn.Linear(self.band_index_start + self.band_repeat, 10),
             nn.LeakyReLU(),
-            nn.Linear(7, 1)
+            nn.Linear(10, 1)
         )
 
     def forward(self, x):
@@ -76,8 +70,6 @@ class Siamese(nn.Module):
 
         for i in range(self.band_repeat):
             band_output[:,i:i+1] = self.bands(x_bands[:,:,i])
-
-        band_output = self.scenes(band_output)
 
         x = torch.cat((x_props, band_output), dim=1)
         x = F.leaky_relu(x)
