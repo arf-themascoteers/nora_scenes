@@ -28,7 +28,9 @@ class CSVProcessor:
             if col in df.columns:
                 df.drop(inplace=True, columns=[col], axis=1)
         for col in df.columns:
-            if col != "scene":
+            if col.startswith("B"):
+                df[col] = df[col] / 6000
+            elif col != "scene":
                 scaler = MinMaxScaler()
                 df[col] = scaler.fit_transform(df[[col]])
         return df
