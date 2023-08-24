@@ -1,9 +1,12 @@
+import os
+
 import numpy as np
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 from sklearn.metrics import r2_score
 from soil_dataset import SoilDataset
+from time import time
 
 
 class ANN(nn.Module):
@@ -21,9 +24,10 @@ class ANN(nn.Module):
         self.lr = 0.01
         self.TOLERANCE = 50
         self.EARLY_STOP_THRESHOLD = 1000
-        self.BEST_MODEL_PATH = r"models/best.h5"
+        model_name = str(time()).replace(".","_")
+        self.BEST_MODEL_PATH = f"models/{model_name}.h5"
         self.EARLY_STOP = True
-
+        os.remove(self.BEST_MODEL_PATH)
         x_size = validation_x.shape[1]
 
         self.linear = nn.Sequential(

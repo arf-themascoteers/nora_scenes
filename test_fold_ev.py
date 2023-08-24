@@ -18,5 +18,5 @@ if __name__ == "__main__":
     configs.append({"input": "all_ex_som", "scenes": scenes[0:3]})
     configs.append({"input": "all_ex_som", "scenes": scenes[0:4]})
     configs.append({"input": "all_ex_som", "scenes": scenes[0:5]})
-    c = FoldEvaluator(configs=configs, prefix="5_Scenes_all", folds=2, algorithms=["svr","ann"])
+    c = FoldEvaluator(configs=configs, prefix="5_Scenes_all", folds=2)
     c.process()
