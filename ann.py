@@ -27,7 +27,6 @@ class ANN(nn.Module):
         model_name = str(time()).replace(".","_")
         self.BEST_MODEL_PATH = f"models/{model_name}.h5"
         self.EARLY_STOP = True
-        os.remove(self.BEST_MODEL_PATH)
         x_size = validation_x.shape[1]
 
         self.linear = nn.Sequential(
