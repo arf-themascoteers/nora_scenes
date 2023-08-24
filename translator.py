@@ -51,6 +51,18 @@ class Translator:
                 return Translator.get_bands()
             elif input_info == "all_ex_som":
                 return Translator.get_all_ex_som()
+            elif input_info == "bands_elevation":
+                return Translator.get_bands_elevation()
+            elif input_info == "bands_moisture":
+                return Translator.get_bands_moisture()
+            elif input_info == "bands_temp":
+                return Translator.get_bands_temp()
+            elif input_info == "bands_elevation_moisture":
+                return Translator.get_bands_elevation_moisture()
+            elif input_info == "bands_moisture_temp":
+                return Translator.get_bands_moisture_temp()
+            elif input_info == "bands_temp_elevation":
+                return Translator.get_temp_elevation()
 
         elif type(input_info) == list:
             return input_info
@@ -78,6 +90,30 @@ class Translator:
     @staticmethod
     def get_all_input():
         return Translator.get_bands() + Translator.get_soil_props()
+
+    @staticmethod
+    def get_bands_elevation():
+        return Translator.get_bands() + ["elevation"]
+
+    @staticmethod
+    def get_bands_moisture():
+        return Translator.get_bands() + ["moisture"]
+
+    @staticmethod
+    def get_bands_temp():
+        return Translator.get_bands() + ["temp"]
+
+    @staticmethod
+    def get_bands_elevation_moisture():
+        return Translator.get_bands() + ["elevation", "moisture"]
+
+    @staticmethod
+    def get_bands_moisture_temp():
+        return Translator.get_bands() + ["moisture", "temp"]
+
+    @staticmethod
+    def get_temp_elevation():
+        return Translator.get_bands() + ["temp","elevation"]
 
     @staticmethod
     def get_superset():
