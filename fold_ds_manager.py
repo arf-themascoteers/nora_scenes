@@ -20,8 +20,12 @@ class FoldDSManager:
         for a_col in self.x:
             if a_col.startswith("B"):
                 x_columns = x_columns + [col for col in df.columns if a_col in col]
+            else:
+                x_columns = x_columns + [a_col]
         self.x = x_columns
         columns = self.x + [self.y]
+        print("Input")
+        print(self.x)
         df = df[columns]
         df = df.sample(frac=1)
         self.full_data = df.to_numpy()
