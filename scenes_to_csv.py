@@ -19,13 +19,14 @@ class SceneToCSVs:
     def create_csvs(self):
         for index, scene in enumerate(self.scene_list):
             dest_clipped_scene_folder_path = os.path.join(self.processed_path, scene)
+            clip_path = os.path.join(dest_clipped_scene_folder_path, "clipped")
             csvs_root = os.path.join(dest_clipped_scene_folder_path, "csvs")
             if os.path.exists(csvs_root):
                 print(f"csvs dir exist for scene {scene}. Skipping.")
                 continue
             else:
                 os.mkdir(csvs_root)
-            table, columns = self.create_table(dest_clipped_scene_folder_path)
+            table, columns = self.create_table(clip_path)
             df = pd.DataFrame(data=table, columns=columns)
             df.sort_values(CSVProcessor.get_spatial_columns(df), inplace=True)
             complete_path = os.path.join(csvs_root, "complete.csv")
@@ -36,9 +37,9 @@ class SceneToCSVs:
             CSVProcessor.make_ml_ready(ag_path, ml_path)
             print(f"Done scene {index+1}: {scene}")
 
-    def create_table(self, dest_clipped_scene_folder_path):
+    def create_table(self, clip_path):
         epsg = self.get_epsg()
-        bands = self.get_band_list(dest_clipped_scene_folder_path)
+        bands = self.get_band_list(clip_path)
         df = pd.read_csv(self.source_csv_path)
         df["when"] = SceneToCSVs.get_epoch(df["when"])
         spatial_columns = CSVProcessor.get_spatial_columns(df)
@@ -48,8 +49,8 @@ class SceneToCSVs:
         table[:,0:data.shape[1]] = data[:,0:data.shape[1]]
         spatial_info_column_start = len(df.columns)
         band_index_start = spatial_info_column_start + len(spatial_columns)
-        self.populate_scene_info(table, dest_clipped_scene_folder_path, spatial_info_column_start)
-        for column_offset, (band, src) in enumerate(self.iterate_bands(dest_clipped_scene_folder_path)):
+        self.populate_scene_info(table, clip_path, spatial_info_column_start)
+        for column_offset, (band, src) in enumerate(self.iterate_bands(clip_path)):
             column_index = band_index_start + column_offset
             for i in range(len(table)):
                 if i!=0 and i%1000 == 0:
