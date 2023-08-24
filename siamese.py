@@ -33,11 +33,11 @@ class Siamese(nn.Module):
         self.band_index_start = band_index_start
         self.band_count = band_count
 
-        self.props = nn.Sequential(
-            nn.Linear(self.band_index_start, 10),
-            nn.LeakyReLU(),
-            nn.Linear(10, self.band_index_start)
-        )
+        # self.props = nn.Sequential(
+        #     nn.Linear(self.band_index_start, 10),
+        #     nn.LeakyReLU(),
+        #     nn.Linear(10, self.band_index_start)
+        # )
 
         self.bands = nn.Sequential(
             nn.Linear(self.band_count, 10),
@@ -53,7 +53,7 @@ class Siamese(nn.Module):
 
     def forward(self, x):
         band_repeat = (x.shape[1] - self.band_index_start) // self.band_count
-        x_props = x[:,0: self.band_index_start]
+        #x_props = x[:,0: self.band_index_start]
         x_bands = torch.zeros((x.shape[0], self.band_count, band_repeat), dtype=torch.float32)
         x_bands = x_bands.to(self.device)
 
@@ -62,7 +62,7 @@ class Siamese(nn.Module):
             end = start + self.band_count
             x_bands[:,:,i] = x[:, start: end]
 
-        x_props = self.props(x_props)
+        #x_props = self.props(x_props)
 
         band_output = torch.zeros((x.shape[0], band_repeat), dtype=torch.float32)
         band_output = band_output.to(self.device)
@@ -71,11 +71,12 @@ class Siamese(nn.Module):
             band_output[:,i:i+1] = self.bands(x_bands[:,:,i])
 
         band_output = torch.mean(band_output, dim=1, keepdim=True)
+        return band_output
 
-        x = torch.cat((x_props, band_output), dim=1)
-        x = F.leaky_relu(x)
-        x = self.combo(x)
-        return x
+        # x = torch.cat((x_props, band_output), dim=1)
+        # x = F.leaky_relu(x)
+        # x = self.combo(x)
+        # return x
 
     def train_model(self):
         if self.TEST:

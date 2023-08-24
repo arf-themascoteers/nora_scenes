@@ -12,8 +12,8 @@ if __name__ == "__main__":
 
     configs = []
 
-    for lim in range(5):
+    for lim in range(4):
         configs.append({"input": "bands", "train_scenes": train_scenes[0:lim+1], "test_scene":test_scene})
-        configs.append({"input": "all_ex_som", "train_scenes": train_scenes[0:lim+1], "test_scene":test_scene})
-    c = FoldEvaluator(configs=configs, prefix="siamese", folds=10, algorithms=["siamese"])
+        #configs.append({"input": "all_ex_som", "train_scenes": train_scenes[0:lim+1], "test_scene":test_scene})
+    c = FoldEvaluator(configs=configs, prefix="band_all", folds=10, algorithms=["mlr","rf","svr","ann"])
     c.process()
