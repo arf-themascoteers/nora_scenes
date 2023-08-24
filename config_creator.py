@@ -24,6 +24,6 @@ class ConfigCreator:
             if type(scene_part) == list:
                 scene_part = len(config_object['scenes'])
 
-            config_object["name"] = f"{config_object['name']}_{scene_part}"
+            config_object["name"] = f"{config_object['name']}_{scene_part}_{config_object['ag']}"
 
         return config_object
