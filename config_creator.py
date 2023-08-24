@@ -4,8 +4,8 @@ from translator import Translator
 class ConfigCreator:
     @staticmethod
     def create_config_object(config):
-        config_object = {"input":[],"output":"som","scenes":0,"name":None}
-
+        config_object = {"input":[],"output":"som","scenes":0,"name":None,"ag":"col"}
+        #ag: row, col, mean
         if isinstance(config["input"], str):
             config_object["input"] = Translator.get_columns_by_input_info(config["input"])
         else:

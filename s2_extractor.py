@@ -8,7 +8,8 @@ from scenes_to_csv import SceneToCSVs
 
 
 class S2Extractor:
-    def __init__(self, scenes=0):
+    def __init__(self, scenes):
+        self.scene_list = scenes
         self.TEST = TEST
         self.FILTERED = True
         self.source_csv = "vectis.csv"
@@ -30,13 +31,6 @@ class S2Extractor:
         if not os.path.exists(self.processed_path):
             os.mkdir(self.processed_path)
 
-        if type(scenes) == list:
-            self.scene_list = scenes
-        else:
-            self.scene_list = SceneProcessor.get_all_scenes()
-            if scenes == 0:
-                scenes = len(self.scene_list)
-            self.scene_list = self.scene_list[0:scenes]
         self.scene_list = sorted(self.scene_list)
         self.scenes_str = S2Extractor.create_scenes_string(self.scene_list)
         self.dir_str_original = self.scenes_str
@@ -92,14 +86,12 @@ class S2Extractor:
         cd = SceneToCSVs(self.scene_list, self.processed_path, self.source_csv_path)
         cd.create_csvs()
         csv = CSVIntegrator(self.processed_path, self.dir_hash_path, self.scene_list)
-        complete, ag, ml = csv.integrate()
+        complete_row, ag_row, ml_row = csv.integrate_row()
+        complete_col, ag_col, ml_col = csv.integrate_col()
+        complete_mean, ag_mean, ml_mean = csv.integrate_mean()
         self.write_dataset_list_file(self.dir_hash, self.scenes_str)
-        return complete, ag, ml, self.scene_list
+        return ml_row, ml_col, ml_mean, self.scene_list
 
-
-if __name__ == "__main__":
-    s2 = S2Extractor()
-    s2.process()
 
 
 

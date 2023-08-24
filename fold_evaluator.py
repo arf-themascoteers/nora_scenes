@@ -24,8 +24,13 @@ class FoldEvaluator:
         for config in configs:
             config_object = ConfigCreator.create_config_object(config)
             self.config_list.append(config_object)
-            s2 = S2Extractor(scenes=config_object["scenes"])
-            _, _, ml, scenes = s2.process()
+            s2 = S2Extractor(config_object["scenes"])
+            ml_row, ml_col, ml_mean, scenes = s2.process()
+            ml = ml_row
+            if config["ag"] == "col":
+                ml = ml_col
+            elif config["ag"] == "mean":
+                ml = ml_mean
             self.csvs.append(ml)
             self.scenes.append(scenes)
             scenes_count.append(len(scenes))
