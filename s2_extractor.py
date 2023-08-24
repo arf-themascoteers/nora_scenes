@@ -80,8 +80,10 @@ class S2Extractor:
     def process(self):
         if os.path.exists(self.dir_hash_path):
             print(f"Dir exists for {self.dir_str_original} - ({self.dir_hash_path}). Skipping.")
-            paths = CSVCollector.collect(self.dir_hash_path)
-            return paths, self.scene_list
+            complete = os.path.join(self.dir_hash_path, "complete.csv")
+            ag = os.path.join(self.dir_hash_path, "ag.csv")
+            ml = os.path.join(self.dir_hash_path, "ml.csv")
+            return complete, ag, ml, self.scene_list
 
         os.mkdir(self.dir_hash_path)
         os.mkdir(self.clip_path)
