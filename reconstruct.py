@@ -1,8 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-from csv_collector import CSVCollector
-from splitter import Splitter
 import os
 
 
@@ -43,20 +41,10 @@ class Reconstructor:
 
     @staticmethod
     def recon_folder(folder):
-        paths = CSVCollector.collect(folder)
-        height, width = Reconstructor.recon(paths["ag"])
-        Reconstructor.recon(paths["train_spatial_csv_path"], height, width)
-        Reconstructor.recon(paths["test_spatial_csv_path"], height, width)
+        path = os.path.join(folder,"ag.csv")
+        Reconstructor.recon(path)
 
 
 if __name__ == "__main__":
     basedir = r"data/processed/47eb237b21511beb392f4845d460e399"
-    #basedir = r"data/hi1p"
-    path = CSVCollector.collect(basedir)
-    height, width = Reconstructor.recon(path["ag"],pad=True)
-
-    for s in Splitter.get_all_split_starts():
-        train = path[CSVCollector.get_key_spatial(s,"train", ml_ready=False)]
-        test = path[CSVCollector.get_key_spatial(s,"test", ml_ready=False)]
-        Reconstructor.recon(train, height, width,pad=False)
-        Reconstructor.recon(test, height, width,pad=False)
+    Reconstructor.recon(basedir)
