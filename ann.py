@@ -47,7 +47,7 @@ class ANN(nn.Module):
         criterion = torch.nn.MSELoss(reduction='sum')
         dataloader = DataLoader(self.train_ds, batch_size=self.batch_size, shuffle=True)
         total_batch = len(dataloader)
-        best_r2 = -100
+        best_r2 = -1000
         best_r2_epoch = 0
         tol = 0
         for epoch in range(self.num_epochs):
