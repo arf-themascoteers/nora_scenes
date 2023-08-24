@@ -22,7 +22,8 @@ class CSVProcessor:
     @staticmethod
     def make_ml_ready_df(df):
         for col in CSVProcessor.get_spatial_columns(df):
-            df.drop(inplace=True, columns=[col], axis=1)
+            if col in df.columns:
+                df.drop(inplace=True, columns=[col], axis=1)
         for col in ["lon", "lat", "when"]:
             if col in df.columns:
                 df.drop(inplace=True, columns=[col], axis=1)
