@@ -35,8 +35,8 @@ class CSVIntegrator:
             else:
                 all_ag = pd.concat([all_ag, ag])
 
-        all_complete.to_csv(self.complete)
-        all_ag.to_csv(self.ag)
+        all_complete.to_csv(self.complete, index=False)
+        all_ag.to_csv(self.ag, index=False)
         CSVProcessor.make_ml_ready(self.ag, self.ml)
         return self.complete, self.ag, self.ml
 
