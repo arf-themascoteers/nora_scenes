@@ -12,8 +12,9 @@ if __name__ == "__main__":
 
     configs = []
 
-    for ag in ["row", "col", "mean"]:
-        for lim in range(5):
-            configs.append({"input": "all_ex_som", "scenes": scenes[0:lim+1], "ag":ag})
+    for inputs in ["bands", "props_ex_som", "all_ex_som"]:
+        for ag in ["row", "col", "mean"]:
+            for lim in range(5):
+                configs.append({"input": inputs, "scenes": scenes[0:lim+1], "ag":ag})
     c = FoldEvaluator(configs=configs, prefix="row_col_mean_all", folds=10)
     c.process()

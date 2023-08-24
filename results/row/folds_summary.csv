@@ -2,5 +2,5 @@ config,R2(mlr),R2(rf),R2(svr),R2(ann),RMSE(mlr),RMSE(rf),RMSE(svr),RMSE(ann),inp
 all_ex_som_1_row,0.635,0.678,0.719,0.721,0.112,0.103,0.098,0.092,B01-B02-B03-B04-B05-B06-B07-B08-B8A-B09-B11-B12-elevation-moisture-temp,som
 all_ex_som_2_row,0.605,0.709,0.748,0.753,0.115,0.1,0.094,0.095,B01-B02-B03-B04-B05-B06-B07-B08-B8A-B09-B11-B12-elevation-moisture-temp,som
 all_ex_som_3_row,0.622,0.743,0.754,0.757,0.116,0.097,0.095,0.094,B01-B02-B03-B04-B05-B06-B07-B08-B8A-B09-B11-B12-elevation-moisture-temp,som
-all_ex_som_4_row,0.596,0.75,0.763,0.743,0.12,0.095,0.093,0.095,B01-B02-B03-B04-B05-B06-B07-B08-B8A-B09-B11-B12-elevation-moisture-temp,som
-all_ex_som_5_row,0.595,0.755,0.763,0.0,0.122,0.094,0.093,0.0,B01-B02-B03-B04-B05-B06-B07-B08-B8A-B09-B11-B12-elevation-moisture-temp,som
+all_ex_som_4_row,0.596,0.75,0.763,0.738,0.12,0.095,0.093,0.096,B01-B02-B03-B04-B05-B06-B07-B08-B8A-B09-B11-B12-elevation-moisture-temp,som
+all_ex_som_5_row,0.595,0.755,0.763,0.746,0.122,0.094,0.093,0.096,B01-B02-B03-B04-B05-B06-B07-B08-B8A-B09-B11-B12-elevation-moisture-temp,som
