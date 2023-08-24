@@ -3,7 +3,6 @@ import pandas as pd
 import hashlib
 from environment import TEST
 from csv_creator import CSVCreator
-from csv_collector import CSVCollector
 from scene_processor import SceneProcessor
 from clips_to_df import ClipsToDF
 
