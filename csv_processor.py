@@ -27,12 +27,10 @@ class CSVProcessor:
         for col in ["lon", "lat", "when"]:
             if col in df.columns:
                 df.drop(inplace=True, columns=[col], axis=1)
-        data = df.to_numpy()
-        for i in range(data.shape[1]):
-            scaler = MinMaxScaler()
-            x_scaled = scaler.fit_transform(data[:, i].reshape(-1, 1))
-            data[:, i] = np.squeeze(x_scaled)
-        df = pd.DataFrame(data=data, columns=df.columns)
+        for col in df.columns:
+            if col != "scene":
+                scaler = MinMaxScaler()
+                df[col] = scaler.fit_transform(df[[col]])
         return df
 
     @staticmethod

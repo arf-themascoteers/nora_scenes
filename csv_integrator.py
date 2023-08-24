@@ -31,7 +31,7 @@ class CSVIntegrator:
 
             scene_complete = os.path.join(scene_csvs_home, "complete.csv")
             complete = pd.read_csv(scene_complete)
-            complete.insert(len(complete.columns), "scene", pd.Series([index] * len(complete)))
+            complete.insert(0, "scene", pd.Series([index] * len(complete)))
             if all_complete is None:
                 all_complete = complete
             else:
@@ -39,7 +39,7 @@ class CSVIntegrator:
 
             scene_ag = os.path.join(scene_csvs_home, "ag.csv")
             ag = pd.read_csv(scene_ag)
-            ag.insert(len(ag.columns), "scene", pd.Series([index] * len(ag)))
+            ag.insert(0, "scene", pd.Series([index] * len(ag)))
             if all_ag is None:
                 all_ag = ag
             else:
@@ -63,7 +63,7 @@ class CSVIntegrator:
 
             scene_complete = os.path.join(scene_csvs_home, "complete.csv")
             complete = pd.read_csv(scene_complete)
-            complete.insert(len(complete.columns), "scene", pd.Series([index] * len(complete)))
+            complete.insert(0, "scene", pd.Series([index] * len(complete)))
             complete.rename(columns=update_map, inplace=True)
             if all_complete is None:
                 all_complete = complete
@@ -75,7 +75,7 @@ class CSVIntegrator:
 
             scene_ag = os.path.join(scene_csvs_home, "ag.csv")
             ag = pd.read_csv(scene_ag)
-            ag.insert(len(ag.columns), "scene", pd.Series([index] * len(ag)))
+            ag.insert(0, "scene", pd.Series([index] * len(ag)))
             ag.rename(columns=update_map, inplace=True)
             if all_ag is None:
                 all_ag = ag
@@ -99,7 +99,7 @@ class CSVIntegrator:
 
             scene_complete = os.path.join(scene_csvs_home, "complete.csv")
             complete = pd.read_csv(scene_complete)
-            complete.insert(len(complete.columns), "scene", pd.Series([index] * len(complete)))
+            complete.insert(0, "scene", pd.Series([index] * len(complete)))
             if all_complete is None:
                 all_complete = complete
             else:
@@ -107,7 +107,7 @@ class CSVIntegrator:
 
             scene_ag = os.path.join(scene_csvs_home, "ag.csv")
             ag = pd.read_csv(scene_ag)
-            ag.insert(len(ag.columns), "scene", pd.Series([index] * len(ag)))
+            ag.insert(0, "scene", pd.Series([index] * len(ag)))
             if all_ag is None:
                 all_ag = ag
             else:
