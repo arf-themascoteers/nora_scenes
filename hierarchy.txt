@@ -1,8 +1,12 @@
 data
 -   processed
-        -dir_hash (ag resolution, scene count)
+        -scene name dir
             -clipped
             -complete.csv
-            -[ag.csv]
+            -ag.csv
+            -ml.csv
+        -dir_hash (scene_names)
+            -complete.csv
+            -ag.csv
             -ml.csv
         -datasets.csv

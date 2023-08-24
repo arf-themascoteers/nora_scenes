@@ -2,9 +2,9 @@ import os
 import pandas as pd
 import hashlib
 from environment import TEST
-from csv_creator import CSVCreator
+from csv_integrator import CSVIntegrator
 from scene_processor import SceneProcessor
-from clips_to_df import ClipsToDF
+from scenes_to_csv import SceneToCSVs
 
 
 class S2Extractor:
@@ -24,11 +24,11 @@ class S2Extractor:
             self.source_csv_path = short_csv_path
 
         processed_dir = "processed"
-        self.processed_dir_path = os.path.join("data", processed_dir)
-        self.datasets_list_file_path = os.path.join(self.processed_dir_path,"datasets.csv")
+        self.processed_path = os.path.join("data", processed_dir)
+        self.datasets_list_file_path = os.path.join(self.processed_path, "datasets.csv")
 
-        if not os.path.exists(self.processed_dir_path):
-            os.mkdir(self.processed_dir_path)
+        if not os.path.exists(self.processed_path):
+            os.mkdir(self.processed_path)
 
         if type(scenes) == list:
             self.scene_list = scenes
@@ -41,7 +41,7 @@ class S2Extractor:
         self.scenes_str = S2Extractor.create_scenes_string(self.scene_list)
         self.dir_str_original = self.scenes_str
         self.dir_hash =  hashlib.md5(self.dir_str_original.encode('UTF-8')).hexdigest()
-        self.dir_hash_path = os.path.join(self.processed_dir_path, self.dir_hash)
+        self.dir_hash_path = os.path.join(self.processed_path, self.dir_hash)
         self.clip_path = os.path.join(self.dir_hash_path, "clipped")
 
     @staticmethod
@@ -87,12 +87,12 @@ class S2Extractor:
 
         os.mkdir(self.dir_hash_path)
         os.mkdir(self.clip_path)
-        scene_processor = SceneProcessor(self.scene_list, self.clip_path, self.source_csv_path)
+        scene_processor = SceneProcessor(self.scene_list, self.processed_path, self.source_csv_path)
         scene_processor.create_clips()
-        cd = ClipsToDF(self.clip_path, self.scene_list, self.source_csv_path)
-        df = cd.get_df()
-        csv = CSVCreator(df, self.dir_hash_path)
-        complete, ag, ml = csv.create()
+        cd = SceneToCSVs(self.scene_list, self.processed_path, self.source_csv_path)
+        cd.create_csvs()
+        csv = CSVIntegrator(self.processed_path, self.dir_hash_path, self.scene_list)
+        complete, ag, ml = csv.integrate()
         self.write_dataset_list_file(self.dir_hash, self.scenes_str)
         return complete, ag, ml, self.scene_list
 

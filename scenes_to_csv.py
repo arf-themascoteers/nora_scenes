@@ -1,5 +1,4 @@
 import pandas as pd
-from scene_processor import SceneProcessor
 import numpy as np
 from datetime import datetime
 import rasterio
@@ -8,41 +7,48 @@ from rasterio.windows import Window
 import os
 from rasterio.warp import transform
 import re
+from csv_processor import CSVProcessor
 
 
-class ClipsToDF:
-    def __init__(self, clip_path, scene_list, source_csv_path):
-        self.clip_path = clip_path
+class SceneToCSVs:
+    def __init__(self, scene_list, processed_path, source_csv_path):
         self.scene_list = scene_list
+        self.processed_path = processed_path
         self.source_csv_path =  source_csv_path
-        self.spatial_columns = ["scene", "row", "column"]
 
-    def get_df(self):
-        df = None
+    def create_csvs(self):
         for index, scene in enumerate(self.scene_list):
-            dest_clipped_scene_folder_path = SceneProcessor.get_scene_clip_folder_path(self.clip_path, scene)
-            table, columns = self.create_table(dest_clipped_scene_folder_path, index+1)
-            current_df = pd.DataFrame(data=table, columns=columns)
-            if df is None:
-                df = current_df
+            dest_clipped_scene_folder_path = os.path.join(self.processed_path, scene)
+            csvs_root = os.path.join(dest_clipped_scene_folder_path, "csvs")
+            if os.path.exists(csvs_root):
+                print(f"csvs dir exist for scene {scene}. Skipping.")
+                continue
             else:
-                df = pd.concat([df, current_df])
+                os.mkdir(csvs_root)
+            table, columns = self.create_table(dest_clipped_scene_folder_path)
+            df = pd.DataFrame(data=table, columns=columns)
+            df.sort_values(CSVProcessor.get_spatial_columns(df), inplace=True)
+            complete_path = os.path.join(csvs_root, "complete.csv")
+            ag_path = os.path.join(csvs_root, "ag.csv")
+            ml_path = os.path.join(csvs_root, "ml.csv")
+            df.to_csv(complete_path, index=False)
+            CSVProcessor.aggregate(complete_path, ag_path)
+            CSVProcessor.make_ml_ready(ag_path, ml_path)
             print(f"Done scene {index+1}: {scene}")
-        df.sort_values(self.spatial_columns, inplace=True)
-        return df
 
-    def create_table(self, dest_clipped_scene_folder_path, scene_serial):
+    def create_table(self, dest_clipped_scene_folder_path):
         epsg = self.get_epsg()
         bands = self.get_band_list(dest_clipped_scene_folder_path)
         df = pd.read_csv(self.source_csv_path)
-        df["when"] = ClipsToDF.get_epoch(df["when"])
-        all_columns = list(df.columns) + self.spatial_columns + bands
+        df["when"] = SceneToCSVs.get_epoch(df["when"])
+        spatial_columns = CSVProcessor.get_spatial_columns(df)
+        all_columns = list(df.columns) + spatial_columns + bands
         table = np.zeros((len(df), len(all_columns)))
         data = df.to_numpy()
         table[:,0:data.shape[1]] = data[:,0:data.shape[1]]
         spatial_info_column_start = len(df.columns)
-        band_index_start = spatial_info_column_start + len(self.spatial_columns)
-        self.populate_scene_info(table, dest_clipped_scene_folder_path, spatial_info_column_start, scene_serial)
+        band_index_start = spatial_info_column_start + len(spatial_columns)
+        self.populate_scene_info(table, dest_clipped_scene_folder_path, spatial_info_column_start)
         for column_offset, (band, src) in enumerate(self.iterate_bands(dest_clipped_scene_folder_path)):
             column_index = band_index_start + column_offset
             for i in range(len(table)):
@@ -86,13 +92,10 @@ class ClipsToDF:
             with rasterio.open(band_path) as src:
                 yield band,src
 
-    def populate_scene_info(self, table, dest_clipped_scene_folder_path, start_index, scene_serial):
+    def populate_scene_info(self, table, dest_clipped_scene_folder_path, start_index):
         epsg = self.get_epsg()
-        SCENE_INDEX = start_index
-        ROW_INDEX = start_index + 1
-        COLUMN_INDEX = start_index + 2
-        for i in range(len(table)):
-            table[i, SCENE_INDEX] = scene_serial
+        ROW_INDEX = start_index
+        COLUMN_INDEX = start_index + 1
         res = dict([(band, src.height * src.width) for band, src in self.iterate_bands(dest_clipped_scene_folder_path)])
         res = sorted(res.items(), key=lambda x: x[1])
         band = res[0][0]
@@ -105,17 +108,19 @@ class ClipsToDF:
             table[i, ROW_INDEX] = row
             table[i, COLUMN_INDEX] = column
             if i != 0 and i % 1000 == 0:
-                print(f"Done populating spatial {i + 1} of {table.shape[0]} for scene {scene_serial}")
+                print(f"Done populating spatial {i + 1} of {table.shape[0]}")
 
         return table
 
-    def get_src_by_band(self, dest_clipped_scene_folder_path, band):
+    @staticmethod
+    def get_src_by_band(dest_clipped_scene_folder_path, band):
         file_name = f"{band}.jp2"
         band_path = os.path.join(dest_clipped_scene_folder_path, file_name)
         with rasterio.open(band_path) as src:
             return src
 
-    def get_row_col_by_lon_lat(self, epsg, src, lon, lat):
+    @staticmethod
+    def get_row_col_by_lon_lat(epsg, src, lon, lat):
         pixel_x, pixel_y = transform(epsg, src.crs, [lon], [lat])
         row, column = src.index(pixel_x, pixel_y)
         row = row[0]
@@ -123,3 +128,4 @@ class ClipsToDF:
         row = min(row, src.height - 1)
         column = min(column, src.width - 1)
         return row, column
+

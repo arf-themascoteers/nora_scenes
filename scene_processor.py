@@ -5,14 +5,17 @@ from clipper import Clipper
 
 
 class SceneProcessor:
-    def __init__(self, scene_list, clip_path, source_csv_path):
+    def __init__(self, scene_list, processed_path, source_csv_path):
         self.scene_list = scene_list
-        self.clip_path = clip_path
+        self.processed_path = processed_path
         self.source_csv_path = source_csv_path
 
     def create_clips(self):
         for index, scene in enumerate(self.scene_list):
-            dest_clipped_scene_folder_path = self.get_scene_clip_folder_path(self.clip_path, scene)
+            dest_clipped_scene_folder_path = os.path.join(self.processed_path, scene)
+            if os.path.exists(dest_clipped_scene_folder_path):
+                print(f"Processed scene dir exists {index + 1}: {scene}. Skipping")
+                continue
             os.mkdir(dest_clipped_scene_folder_path)
             base = self.get_scene_source(scene)
             self.clip_bands(base, dest_clipped_scene_folder_path)
@@ -37,10 +40,6 @@ class SceneProcessor:
                 clipper = Clipper(source_band_path, dest_band_path, self.source_csv_path)
                 clipper.clip()
         return done
-
-    @staticmethod
-    def get_scene_clip_folder_path(clip_path, scene):
-        return os.path.join(clip_path, scene)
 
     def get_scene_source(self, scene):
         scene_path = os.path.join(BASE_PATH, scene)
