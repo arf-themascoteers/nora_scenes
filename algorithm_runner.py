@@ -1,5 +1,6 @@
 import torch
 from ann import ANN
+from siamese import Siamese
 from sklearn.linear_model import LinearRegression
 from sklearn.cross_decomposition import PLSRegression
 from sklearn.ensemble import RandomForestRegressor
@@ -9,7 +10,13 @@ from sklearn.metrics import mean_squared_error, r2_score
 
 class AlgorithmRunner:
     @staticmethod
-    def calculate_score(train_x, train_y, test_x, test_y, validation_x, validation_y, algorithm):
+    def calculate_score(train_x, train_y,
+                        test_x, test_y,
+                        validation_x,
+                        validation_y,
+                        algorithm,
+                        band_index_start, band_count, band_repeat
+                        ):
         y_hats = None
         print(f"Train: {len(train_y)}, Test: {len(test_y)}, Validation: {len(validation_y)}")
         if algorithm == "ann":
@@ -17,6 +24,13 @@ class AlgorithmRunner:
             model_instance = ANN(device, train_x, train_y, test_x, test_y, validation_x, validation_y)
             model_instance.train_model()
             y_hats = model_instance.test()
+        elif algorithm == "siamese":
+            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+            model_instance = Siamese(device, train_x, train_y, test_x, test_y, validation_x, validation_y,
+                                     band_index_start, band_count, band_repeat)
+            model_instance.train_model()
+            y_hats = model_instance.test()
+
         else:
             model_instance = None
             if algorithm == "mlr":

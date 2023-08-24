@@ -13,7 +13,7 @@ class FoldEvaluator:
         self.algorithms = algorithms
 
         if self.algorithms is None:
-            self.algorithms = ["mlr", "rf", "svr", "ann"]
+            self.algorithms = ["mlr", "rf", "svr", "ann", "siamese"]
 
         self.config_list = []
         self.csvs = []
@@ -64,7 +64,12 @@ class FoldEvaluator:
                 print(f"{repeat_number}-{fold_number} done already")
                 continue
             else:
-                r2, rmse = AlgorithmRunner.calculate_score(train_x, train_y, test_x, test_y, validation_x, validation_y, algorithm)
+                r2, rmse = AlgorithmRunner.calculate_score(train_x, train_y,
+                                                           test_x, test_y,
+                                                           validation_x, validation_y,
+                                                           algorithm,
+                                                           ds.band_index_start, ds.band_count, ds.band_repeat
+                                                           )
             if self.verbose:
                 print(f"{r2} - {rmse}")
                 print(f"R2 - RMSE")
