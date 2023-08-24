@@ -80,7 +80,7 @@ class ANN(nn.Module):
                     if r2_validation > best_r2:
                         best_r2 = r2_validation
                         best_r2_epoch = epoch
-                        torch.save(self.state_dict(), 'models/best.h5')
+                        torch.save(self.state_dict(), self.BEST_MODEL_PATH)
                         tol = 0
                     else:
                         tol = tol + 1
