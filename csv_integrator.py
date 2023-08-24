@@ -111,14 +111,12 @@ class CSVIntegrator:
             if all_ag is None:
                 all_ag = ag
             else:
-                all_ag = pd.concat([all_ag, ag])
+                all_ag = pd.concat([all_ag, ag], axis=0)
 
         all_complete.to_csv(self.complete_mean, index=False)
 
-        all_ag.drop(inplace=True, columns=["scene"], axis=1)
-        spatial_columns = CSVProcessor.get_spatial_columns(all_ag)
-        columns_to_agg = all_ag.columns.drop(spatial_columns)
-        all_ag = all_ag.groupby(spatial_columns)[columns_to_agg].mean().reset_index()
+        all_ag.drop(inplace=True, columns=CSVProcessor.get_spatial_columns(all_ag), axis=1)
+        all_ag = all_ag.groupby(all_ag.index).mean().reset_index(drop=True)
         all_ag.to_csv(self.ag_mean, index=False)
 
         CSVProcessor.make_ml_ready(self.ag_mean, self.ml_mean)
