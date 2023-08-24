@@ -90,9 +90,9 @@ class S2Extractor:
         cd = ClipsToDF(self.clip_path, self.scene_list, self.source_csv_path)
         df = cd.get_df()
         csv = CSVCreator(df, self.dir_hash_path)
-        paths = csv.create()
+        complete, ag, ml = csv.create()
         self.write_dataset_list_file(self.dir_hash, self.scenes_str)
-        return paths, self.scene_list
+        return complete, ag, ml, self.scene_list
 
 
 if __name__ == "__main__":
