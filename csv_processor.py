@@ -1,6 +1,5 @@
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
-import numpy as np
 
 
 class CSVProcessor:
@@ -11,7 +10,19 @@ class CSVProcessor:
         spatial_columns = CSVProcessor.get_spatial_columns(df)
         columns_to_agg = df.columns.drop(spatial_columns)
         df = df.groupby(spatial_columns)[columns_to_agg].mean().reset_index()
-        df.to_csv(ag, index=False)
+
+        agg_dict = {}
+        agg_dict["counter"] = ("som", 'count')
+        agg_dict["som_std"] = ("som", 'std')
+        for col in columns_to_agg:
+            agg_dict[col] = (col, "mean")
+
+        df_group_object = df.groupby(spatial_columns)
+        df_mean = df_group_object.agg(**agg_dict).reset_index()
+        df_mean.insert(0, "cell", df_mean.index)
+        df_mean = df_mean.sort_values(by=['counter', 'som_std'], ascending=[False, True])
+        df_mean = df_mean[df_mean["counter"] >= 40]
+        df_mean.to_csv(ag, index=False)
 
     @staticmethod
     def make_ml_ready(ag, ml):
