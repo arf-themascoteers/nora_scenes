@@ -10,7 +10,7 @@ from scenes_to_csv import SceneToCSVs
 class S2Extractor:
     def __init__(self, scenes):
         self.scene_list = scenes
-        self.TEST = TEST
+        self.TEST = False
         self.FILTERED = True
         self.source_csv = "vectis.csv"
         if self.TEST:
