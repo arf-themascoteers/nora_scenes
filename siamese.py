@@ -34,53 +34,50 @@ class Siamese(nn.Module):
         self.band_index_start = band_index_start
         self.band_count = band_count
         self.band_repeat = band_repeat
+        self.prop_vector_size = 5
+        self.band_vector_size = 3
+        self.combo_input_size = self.band_vector_size
 
-        self.props = nn.Sequential(
-            nn.Linear(self.band_index_start, 10),
-            nn.LeakyReLU(),
-            nn.Linear(10, self.band_index_start)
-        )
+        if self.band_index_start > 0:
+            self.props = nn.Sequential(
+                nn.Linear(self.band_index_start, 10),
+                nn.LeakyReLU(),
+                nn.Linear(10, self.prop_vector_size)
+            )
+            self.combo_input_size = self.combo_input_size + self.prop_vector_size
 
         self.bands = nn.Sequential(
             nn.Linear(self.band_count, 10),
             nn.LeakyReLU(),
-            nn.Linear(10, 1)
-        )
-
-        self.scenes = nn.Sequential(
-            nn.Linear(self.band_repeat, 5),
-            nn.LeakyReLU(),
-            nn.Linear(5, 1)
+            nn.Linear(10, self.band_vector_size)
         )
 
         self.combo = nn.Sequential(
-            nn.Linear(self.band_index_start + 1, 7),
+            nn.Linear(self.combo_input_size, 3),
             nn.LeakyReLU(),
-            nn.Linear(7, 1)
+            nn.Linear(3, 1)
         )
 
     def forward(self, x):
-        x_props = x[:,0: self.band_index_start]
         x_bands = torch.zeros((x.shape[0], self.band_count, self.band_repeat), dtype=torch.float32)
         x_bands = x_bands.to(self.device)
-
         for i in range(self.band_repeat):
             start = self.band_index_start + (i*self.band_count)
             end = start + self.band_count
             x_bands[:,:,i] = x[:, start: end]
-
-        x_props = self.props(x_props)
-
-        band_output = torch.zeros((x.shape[0], self.band_repeat), dtype=torch.float32)
+        band_output = torch.zeros((x.shape[0], self.band_vector_size, self.band_repeat), dtype=torch.float32)
         band_output = band_output.to(self.device)
-
         for i in range(self.band_repeat):
-            band_output[:,i:i+1] = self.bands(x_bands[:,:,i])
+            band_output[:,:,i] = self.bands(x_bands[:,:,i])
+        band_output = torch.mean(band_output, dim=2)
 
-        band_output = torch.sum(band_output, dim=1, keepdim=True)
+        if self.band_index_start > 0:
+            x_props = x[:,0: self.band_index_start]
+            x_props = self.props(x_props)
+            x = torch.cat((x_props, band_output), dim=1)
+        else:
+            x = band_output
 
-        x = torch.cat((x_props, band_output), dim=1)
-        x = F.leaky_relu(x)
         x = self.combo(x)
         return x
 

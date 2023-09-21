@@ -1,6 +1,0 @@
-config,R2(siamese),RMSE(siamese),input,output
-all_ex_som_1_col,0.712,0.098,B01-B02-B03-B04-B05-B06-B07-B08-B8A-B09-B11-B12-elevation-moisture-temp,som
-all_ex_som_2_col,0.689,0.098,B01-B02-B03-B04-B05-B06-B07-B08-B8A-B09-B11-B12-elevation-moisture-temp,som
-all_ex_som_3_col,0.708,0.095,B01-B02-B03-B04-B05-B06-B07-B08-B8A-B09-B11-B12-elevation-moisture-temp,som
-all_ex_som_4_col,0.693,0.095,B01-B02-B03-B04-B05-B06-B07-B08-B8A-B09-B11-B12-elevation-moisture-temp,som
-all_ex_som_5_col,0.727,0.097,B01-B02-B03-B04-B05-B06-B07-B08-B8A-B09-B11-B12-elevation-moisture-temp,som

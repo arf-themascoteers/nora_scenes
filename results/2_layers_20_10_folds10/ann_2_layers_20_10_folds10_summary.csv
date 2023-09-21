@@ -1,6 +1,0 @@
-config,R2(ann),RMSE(ann),input,output
-all_ex_som_1,0.7,0.098,B01-B02-B03-B04-B05-B06-B07-B08-B8A-B09-B11-B12-elevation-moisture-temp,som
-all_ex_som_2,0.744,0.095,B01-B02-B03-B04-B05-B06-B07-B08-B8A-B09-B11-B12-elevation-moisture-temp,som
-all_ex_som_3,0.759,0.093,B01-B02-B03-B04-B05-B06-B07-B08-B8A-B09-B11-B12-elevation-moisture-temp,som
-all_ex_som_4,0.753,0.095,B01-B02-B03-B04-B05-B06-B07-B08-B8A-B09-B11-B12-elevation-moisture-temp,som
-all_ex_som_5,0.754,0.095,B01-B02-B03-B04-B05-B06-B07-B08-B8A-B09-B11-B12-elevation-moisture-temp,som

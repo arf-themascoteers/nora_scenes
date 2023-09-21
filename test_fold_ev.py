@@ -9,5 +9,5 @@ if __name__ == "__main__":
     configs = []
     for i in inputs:
         configs.append({"input": i, "scenes": scenes})
-    c = FoldEvaluator(configs=configs, prefix="folds_single", folds=10)
+    c = FoldEvaluator(configs=configs, prefix="t1", folds=10, algorithms=["mlr","svr","ann"])
     c.process()

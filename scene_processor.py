@@ -1,7 +1,7 @@
 import os
 from base_path import BASE_PATH
-import re
 from clipper import Clipper
+from s2_bands import S2Bands
 
 
 class SceneProcessor:
@@ -23,25 +23,43 @@ class SceneProcessor:
             self.clip_bands(base, clip_path)
             print(f"Done clipping scene {index+1}: {scene}")
 
+    def clip_file(self, base, src, dest):
+        parts = src.split("_")
+        band = parts[2]
+        source_band_path = os.path.join(base, src)
+        dest_band_path = os.path.join(dest, f"{band}.jp2")
+        clipper = Clipper(source_band_path, dest_band_path, self.source_csv_path)
+        clipper.clip()
+        return band
+
+    def clip_band(self, resolution_path, clip_path, target_band):
+        for file_name in os.listdir(resolution_path):
+            if not file_name.endswith(".jp2"):
+                continue
+            parts = file_name.split("_")
+            band = parts[2]
+            if band == target_band:
+                self.clip_file(resolution_path, file_name, clip_path)
+
     def clip_bands(self, base, clip_path):
-        done = []
-        folders = os.listdir(base)
-        folders = sorted(folders, key=lambda x: int(re.findall(r'\d+', x)[0]), reverse=True)
-        for resolution in folders:
-            resolution_path = os.path.join(base, resolution)
-            for file_name in os.listdir(resolution_path):
-                if not file_name.endswith(".jp2"):
-                    continue
-                parts = file_name.split("_")
-                band = parts[2]
-                if band in done:
-                    continue
-                done.append(band)
-                source_band_path = os.path.join(resolution_path, file_name)
-                dest_band_path = os.path.join(clip_path, f"{band}.jp2")
-                clipper = Clipper(source_band_path, dest_band_path, self.source_csv_path)
-                clipper.clip()
-        return done
+        bands = []
+
+        resolution_path = os.path.join(base, "R20m")
+        for band in S2Bands.get_R20m_bands():
+            self.clip_band(resolution_path, clip_path, band)
+            bands.append(band)
+
+        resolution_path = os.path.join(base, "R10m")
+        for band in S2Bands.get_R10m_bands():
+            self.clip_band(resolution_path, clip_path, band)
+            bands.append(band)
+
+        resolution_path = os.path.join(base, "R60m")
+        for band in S2Bands.get_R60m_bands():
+            self.clip_band(resolution_path, clip_path, band)
+            bands.append(band)
+
+        return bands
 
     def get_scene_source(self, scene):
         scene_path = os.path.join(BASE_PATH, scene)

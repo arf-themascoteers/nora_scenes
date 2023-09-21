@@ -97,10 +97,7 @@ class SceneToCSVs:
         epsg = self.get_epsg()
         ROW_INDEX = start_index
         COLUMN_INDEX = start_index + 1
-        res = dict([(band, src.height * src.width) for band, src in self.iterate_bands(dest_clipped_scene_folder_path)])
-        res = sorted(res.items(), key=lambda x: x[1])
-        band = res[0][0]
-        src = self.get_src_by_band(dest_clipped_scene_folder_path, band)
+        src = self.get_src_by_band(dest_clipped_scene_folder_path, "B05")
 
         for i in range(table.shape[0]):
             lon = table[i, 0]

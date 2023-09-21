@@ -12,7 +12,12 @@ if __name__ == "__main__":
 
     configs = []
 
-    for lim in range(5):
-        configs.append({"input": "all_ex_som", "scenes": scenes[0:lim+1], "ag":"col"})
+    for inputs in ["bands", "all_ex_som",
+                   "bands_elevation","bands_moisture","bands_temp",
+                   "bands_elevation_moisture","bands_moisture_temp","bands_temp_elevation",
+                   ]:
+        for ag in ["row", "col", "mean"]:
+            for lim in range(5):
+                configs.append({"input": inputs, "scenes": scenes[0:lim+1], "ag":ag})
     c = FoldEvaluator(configs=configs, prefix="siamese", folds=10, algorithms=["siamese"])
     c.process()
