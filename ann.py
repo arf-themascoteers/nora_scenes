@@ -19,14 +19,14 @@ class ANN(nn.Module):
         self.train_ds = SoilDataset(train_x, train_y)
         self.test_ds = SoilDataset(test_x, test_y)
         self.validation_ds = SoilDataset(validation_x, validation_y)
-        self.num_epochs = 2000
+        self.num_epochs = 3000
         self.batch_size = 3000
         self.lr = 0.01
         self.TOLERANCE = 50
         self.EARLY_STOP_THRESHOLD = 1000
         model_name = str(time()).replace(".","_")
         self.BEST_MODEL_PATH = f"models/{model_name}.h5"
-        self.EARLY_STOP = True
+        self.EARLY_STOP = False
         x_size = validation_x.shape[1]
 
         self.linear = nn.Sequential(
