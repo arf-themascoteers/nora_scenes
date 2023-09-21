@@ -9,7 +9,6 @@ class CSVProcessor:
         df.drop(columns=CSVProcessor.get_geo_columns(), axis=1, inplace=True)
         spatial_columns = CSVProcessor.get_spatial_columns(df)
         columns_to_agg = df.columns.drop(spatial_columns)
-        df = df.groupby(spatial_columns)[columns_to_agg].mean().reset_index()
 
         agg_dict = {}
         agg_dict["counter"] = ("som", 'count')

@@ -1,3 +1,6 @@
+from s2_bands import S2Bands
+
+
 class Translator:
     @staticmethod
     def get_input_name(config):
@@ -43,6 +46,12 @@ class Translator:
                 return the_list
             elif input_info == "upper_vis_props":
                 return Translator.get_soil_props_upper_vis()
+            elif input_info == "R20m_bands":
+                return S2Bands.get_R20m_bands()
+            elif input_info == "R20m_R10m_bands":
+                return S2Bands.get_R20m_bands() + S2Bands.get_R10m_bands()
+            elif input_info == "R20m_R60m_bands":
+                return S2Bands.get_R20m_bands() + S2Bands.get_R60m_bands()
             elif input_info == "upper_vis_props_ex_som":
                 the_list = Translator.get_soil_props_upper_vis()
                 the_list.remove("som")
